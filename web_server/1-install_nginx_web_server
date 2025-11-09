@@ -1,10 +1,20 @@
 #!/usr/bin/env bash
-# SetUp Process for Nginx on a server
+# Sets up Nginx web server on Ubuntu
 
-apt-get -y update
-apt-get -y install nginx
-ufw enable
-ufw allow 'Nginx HTTP'
-ufw allow 'OpenSSH'
-echo "Holberton School" > /var/www/html/index.html
+# Update package list and install nginx
+apt-get update -y
+apt-get install nginx -y
+
+# Ensure nginx is running
+service nginx start
+
+# Replace default page content with required text
+echo "Holberton School" > /var/www/html/index.nginx-debian.html
+
+# Optional: ensure Nginx listens on port 80 (default)
+sed -i 's/listen 80 default_server;/listen 80 default_server;/' /etc/nginx/sites-available/default
+
+# Restart nginx without using systemctl
 service nginx restart
+
+
