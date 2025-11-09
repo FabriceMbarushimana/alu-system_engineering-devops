@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Script to install and configure nginx web server
+# Updates package list, installs nginx, configures custom content, and starts service
 
 # Update package list and install nginx with -y flag
 apt-get update
