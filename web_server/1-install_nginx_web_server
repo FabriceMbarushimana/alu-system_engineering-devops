@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
-# Installs nginx and sets up a simple web page
+# Installs and configures Nginx to serve a page containing 'Holberton School'
 
+# Update package list and install nginx
 apt-get update -y
 apt-get install -y nginx
 
-# Create a simple index page
-echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
+# Start nginx service
+service nginx start
 
-# Restart nginx (without systemctl)
+# Replace the default index.html with the required message
+echo "Holberton School for the win!" > /var/www/html/index.html
+
+# Restart nginx to apply changes
 service nginx restart
+
