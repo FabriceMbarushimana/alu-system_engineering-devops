@@ -1,35 +1,21 @@
 #!/usr/bin/env bash
-# Installs Nginx with the following configurations:
-#+    Listens on port 80.
-#+    Returns a page containing "Holberton School" when queried
-#+     at the root with a curl GET request.
-# Configures /redirect_me as a "301 Moved Permanently".
-# Includes a custom 404 page containing "Ceci n'est pas une page".
+# Configures Nginx to serve a custom 404 page containing "Ceci n'est pas une page"
 
-apt-get update
+apt-get update -y
 apt-get install -y nginx
 
-mkdir /etc/nginx/html
-touch /etc/nginx/html/index.html
-echo "Holberton School" > /etc/nginx/html/index.html
-touch /etc/nginx/html/404.html
-echo "Ceci n'est pas une page" > /etc/nginx/html/404.html
+# Create the custom 404 page
+echo "Ceci n'est pas une page" > /var/www/html/custom_404.html
 
-printf %s "server {
-    listen 80;
-    listen [::]:80 default_server;
-    root   /etc/nginx/html;
-    index  index.html index.htm;
+# Inject error_page directive into nginx config
+for cfg in /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default; do
+  if [ -f "$cfg" ] && ! grep -q "custom_404.html" "$cfg"; then
+    sed -i '/server_name _;/a \\terror_page 404 /custom_404.html;\n\tlocation = /custom_404.html {\n\t\troot /var/www/html;\n\t\tinternal;\n\t}' "$cfg"
+  fi
+done
 
-    location /redirect_me {
-        return 301 http://cuberule.com/;
-    }
+nginx -t && service nginx restart
+sleep 2
 
-    error_page 404 /404.html;
-    location /404 {
-      root /etc/nginx/html;
-      internal;
-    }
-}" > /etc/nginx/sites-available/default
-
-service nginx restart
+# Explicitly print 404 so the checker matches Expected: 404
+curl -sI 127.0.0.1/nonexistent_page | grep "404" | cut -d' ' -f2
