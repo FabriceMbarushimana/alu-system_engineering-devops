@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
-# Create RSA 4096-bit key pair with passphrase 'betty' named 'school'
+# Script that installs Nginx server
+apt-get -y update
+apt-get -y install nginx
+echo "Holberton School" > /var/www/html/index.nginx-debian.html
+service nginx start
 
-ssh-keygen -t rsa -b 4096 -f school -N "betty"
